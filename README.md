@@ -1,3 +1,3 @@
-# website
+# Import
 
-Simple Website Template
+Allow import of local storage keys into another site.

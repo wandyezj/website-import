@@ -54,6 +54,10 @@ module.exports = async (env, options) => {
                         to: "robots.txt",
                         from: "./src/robots.txt",
                     },
+                    {
+                        to: "import.html",
+                        from: "./src/import.html",
+                    },
                 ],
             }),
         ],
