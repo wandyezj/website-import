@@ -1,0 +1,64 @@
+<!doctype html>
+<!--
+    Test the import iframe
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'unsafe-inline'; frame-src https://localhost:3000"
+    />
+  </head>
+
+  <body>
+    <script>
+      function initialize() {
+        console.log("initialize");
+
+        // Origin of the iframe
+        const iframeOrigin = "https://localhost:3000";
+
+        const source = iframeOrigin + "/import.html";
+        const iframe = document.createElement("iframe");
+        iframe.hidden = true;
+
+        const onMessage = (event) => {
+          console.log("onMessage", event);
+          if (event.origin !== iframeOrigin) {
+            console.log("Invalid origin", event.origin);
+            return;
+          }
+
+          const { data } = event;
+          const { id } = data;
+          if (id === "solution-start") {
+            console.log("solution-start");
+          } else if (id === "solution") {
+            console.log("solution");
+            console.log(data.key);
+            console.log(data.value);
+          } else if (id === "solution-end") {
+            console.log("solution-end");
+          }
+        };
+
+        window.addEventListener("message", onMessage);
+        console.log(`set iframe source`);
+        iframe.src = source;
+        document.body.appendChild(iframe);
+        iframe.onload = () => {
+          console.log("iframe loaded");
+          const send = (message, targetOrigin) => {
+            console.log("send", message);
+            iframe.contentWindow.postMessage(message, targetOrigin);
+          };
+          send({ id: "get-solutions" }, iframeOrigin);
+        };
+      }
+      initialize();
+
+      //window.onload = initialize;
+    </script>
+  </body>
+</html>
